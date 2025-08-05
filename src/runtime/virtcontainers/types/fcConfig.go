@@ -6,7 +6,7 @@
 package types
 
 import (
-	"github.com/peernode/peernode/src/runtime/virtcontainers/pkg/firecracker/client/models"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/firecracker/client/models"
 )
 
 type FcConfig struct {

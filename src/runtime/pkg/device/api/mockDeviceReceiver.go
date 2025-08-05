@@ -8,7 +8,7 @@ package api
 import (
 	"context"
 
-	"github.com/kata-containers/kata-containers/src/runtime/pkg/device/config"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/config"
 )
 
 // MockDeviceReceiver is a fake DeviceReceiver API implementation only used for test

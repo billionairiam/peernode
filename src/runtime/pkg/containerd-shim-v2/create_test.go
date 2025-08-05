@@ -20,12 +20,12 @@ import (
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
-	ktu "github.com/peernode/peernode/src/runtime/pkg/katatestutils"
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers"
-	vcAnnotations "github.com/peernode/peernode/src/runtime/virtcontainers/pkg/annotations"
-	"github.com/peernode/peernode/src/runtime/virtcontainers/pkg/compatoci"
-	"github.com/peernode/peernode/src/runtime/virtcontainers/pkg/vcmock"
+	"github.com/kata-containers/kata-containers/src/runtime/pkg/device/config"
+	ktu "github.com/kata-containers/kata-containers/src/runtime/pkg/katatestutils"
+	vc "github.com/kata-containers/kata-containers/src/runtime/virtcontainers"
+	vcAnnotations "github.com/kata-containers/kata-containers/src/runtime/virtcontainers/pkg/annotations"
+	"github.com/kata-containers/kata-containers/src/runtime/virtcontainers/pkg/compatoci"
+	"github.com/kata-containers/kata-containers/src/runtime/virtcontainers/pkg/vcmock"
 )
 
 func TestCreateSandboxSuccess(t *testing.T) {

@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/peernode/peernode/src/runtime/virtcontainers/pkg/firecracker/client/models"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/firecracker/client/models"
 )
 
 // PutLoggerReader is a Reader for the PutLogger structure.

@@ -27,8 +27,8 @@ import (
 	"google.golang.org/grpc/status"
 	grpcStatus "google.golang.org/grpc/status"
 
+	agentgrpc "github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/agent/protocols/grpc"
 	"github.com/containerd/ttrpc"
-	agentgrpc "github.com/peernode/peernode/src/runtime/virtcontainers/pkg/agent/protocols/grpc"
 )
 
 const (

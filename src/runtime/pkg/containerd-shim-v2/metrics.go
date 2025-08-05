@@ -8,11 +8,11 @@ package containerdshim
 import (
 	"context"
 
+	resCtrl "github.com/billionairiam/peernode/src/runtime/pkg/resourcecontrol"
+	vc "github.com/billionairiam/peernode/src/runtime/virtcontainers"
 	cgroupsv1 "github.com/containerd/cgroups/stats/v1"
 	cgroupsv2 "github.com/containerd/cgroups/v2/stats"
 	"github.com/containerd/containerd/protobuf"
-	resCtrl "github.com/peernode/peernode/src/runtime/pkg/resourcecontrol"
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers"
 	anypb "google.golang.org/protobuf/types/known/anypb"
 )
 

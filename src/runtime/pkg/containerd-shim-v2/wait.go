@@ -16,7 +16,7 @@ import (
 	"github.com/containerd/containerd/mount"
 	"github.com/sirupsen/logrus"
 
-	"github.com/peernode/peernode/src/runtime/pkg/oci"
+	"github.com/billionairiam/peernode/src/runtime/pkg/oci"
 )
 
 const defaultCheckInterval = 1 * time.Second

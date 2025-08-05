@@ -6,7 +6,7 @@
 package katautils
 
 import (
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers"
+	vc "github.com/billionairiam/peernode/src/runtime/virtcontainers"
 )
 
 func EnterNetNS(networkID string, cb func() error) error {

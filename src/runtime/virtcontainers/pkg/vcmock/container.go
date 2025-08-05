@@ -6,7 +6,7 @@
 package vcmock
 
 import (
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers"
+	vc "github.com/billionairiam/peernode/src/runtime/virtcontainers"
 )
 
 // ID implements the VCContainer function of the same name.

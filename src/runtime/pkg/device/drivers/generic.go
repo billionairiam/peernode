@@ -10,8 +10,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/peernode/peernode/src/runtime/pkg/device/api"
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/api"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/config"
 )
 
 // GenericDevice refers to a device that is neither a VFIO device, block device or VhostUserDevice.

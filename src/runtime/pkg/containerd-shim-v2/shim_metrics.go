@@ -9,8 +9,8 @@ import (
 	"context"
 	"time"
 
-	mutils "github.com/peernode/peernode/src/runtime/pkg/utils"
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers"
+	mutils "github.com/billionairiam/peernode/src/runtime/pkg/utils"
+	vc "github.com/billionairiam/peernode/src/runtime/virtcontainers"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/procfs"
 )

@@ -1,7 +1,7 @@
 # Kata test utilities
 
 This package provides a small set of test utilities. See the
-[GoDoc](https://pkg.go.dev//src/runtime/pkg/katatestutils)
+[GoDoc](https://pkg.go.dev/github.com/billionairiam/peernode/src/runtime/pkg/katatestutils)
 for full details.
 
 ## Test Constraints
@@ -135,4 +135,4 @@ func TestOldKernelVersion(t *testing.T) {
 ### Full details
 
 The public API is shown in [`constraints_api.go`](constraints_api.go) or
-the [GoDoc](https://pkg.go.dev//src/runtime/pkg/katatestutils).
+the [GoDoc](https://pkg.go.dev/github.com/billionairiam/peernode/src/runtime/pkg/katatestutils).

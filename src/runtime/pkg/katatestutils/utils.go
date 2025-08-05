@@ -14,8 +14,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/config"
 	"github.com/opencontainers/runtime-spec/specs-go"
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -17,16 +17,16 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/config"
+	"github.com/billionairiam/peernode/src/runtime/pkg/govmm"
+	govmmQemu "github.com/billionairiam/peernode/src/runtime/pkg/govmm/qemu"
+	"github.com/billionairiam/peernode/src/runtime/pkg/katautils/katatrace"
+	"github.com/billionairiam/peernode/src/runtime/pkg/oci"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers"
+	vc "github.com/billionairiam/peernode/src/runtime/virtcontainers"
+	exp "github.com/billionairiam/peernode/src/runtime/virtcontainers/experimental"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/utils"
 	"github.com/pbnjay/memory"
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
-	"github.com/peernode/peernode/src/runtime/pkg/govmm"
-	govmmQemu "github.com/peernode/peernode/src/runtime/pkg/govmm/qemu"
-	"github.com/peernode/peernode/src/runtime/pkg/katautils/katatrace"
-	"github.com/peernode/peernode/src/runtime/pkg/oci"
-	"github.com/peernode/peernode/src/runtime/virtcontainers"
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers"
-	exp "github.com/peernode/peernode/src/runtime/virtcontainers/experimental"
-	"github.com/peernode/peernode/src/runtime/virtcontainers/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -57,7 +57,7 @@ const (
 	// the maximum amount of PCI bridges that can be cold plugged in a VM
 	maxPCIBridges uint32 = 5
 	// For more info on why these values were chosen, see:
-	// https://github.com/peernode/peernode/blob/main/docs/design/kata-vra.md#hypervisor-resource-limits
+	// https://github.com/billionairiam/peernode/blob/main/docs/design/kata-vra.md#hypervisor-resource-limits
 	maxPCIeRootPorts   uint32 = 16
 	maxPCIeSwitchPorts uint32 = 16
 

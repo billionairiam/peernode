@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/config"
 )
 
 const (

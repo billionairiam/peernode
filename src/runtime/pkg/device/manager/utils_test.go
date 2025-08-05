@@ -9,7 +9,7 @@ package manager
 import (
 	"testing"
 
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
+	"github.com/kata-containers/kata-containers/src/runtime/pkg/device/config"
 	"github.com/stretchr/testify/assert"
 )
 

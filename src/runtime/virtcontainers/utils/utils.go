@@ -20,7 +20,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 
-	pbTypes "github.com/peernode/peernode/src/runtime/virtcontainers/pkg/agent/protocols"
+	pbTypes "github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/agent/protocols"
 )
 
 const cpBinaryName = "cp"

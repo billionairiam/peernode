@@ -13,10 +13,10 @@ import (
 	"strconv"
 	"strings"
 
+	vcTypes "github.com/billionairiam/peernode/src/runtime/virtcontainers/types"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	"github.com/go-ini/ini"
 	"github.com/opencontainers/runtime-spec/specs-go"
-	vcTypes "github.com/peernode/peernode/src/runtime/virtcontainers/types"
 	"golang.org/x/sys/unix"
 )
 

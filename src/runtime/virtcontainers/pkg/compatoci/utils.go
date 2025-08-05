@@ -14,7 +14,7 @@ import (
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 
-	vcAnnotations "/src/runtime/virtcontainers/pkg/annotations"
+	vcAnnotations "github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/annotations"
 )
 
 var ociLog = logrus.WithFields(logrus.Fields{

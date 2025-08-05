@@ -15,9 +15,9 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/peernode/peernode/src/runtime/pkg/device/api"
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
-	"github.com/peernode/peernode/src/runtime/virtcontainers/utils"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/api"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/config"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/utils"
 )
 
 // bind/unbind paths to aid in SRIOV VF bring-up/restore

@@ -13,10 +13,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/peernode/peernode/src/runtime/pkg/device/api"
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
-	"github.com/peernode/peernode/src/runtime/pkg/device/drivers"
-	ktu "github.com/peernode/peernode/src/runtime/pkg/katatestutils"
+	"github.com/kata-containers/kata-containers/src/runtime/pkg/device/api"
+	"github.com/kata-containers/kata-containers/src/runtime/pkg/device/config"
+	"github.com/kata-containers/kata-containers/src/runtime/pkg/device/drivers"
+	ktu "github.com/kata-containers/kata-containers/src/runtime/pkg/katatestutils"
 	"github.com/stretchr/testify/assert"
 
 	"golang.org/x/sys/unix"

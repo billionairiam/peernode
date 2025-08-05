@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	shim "github.com/peernode/peernode/src/runtime/pkg/containerd-shim-v2"
+	shim "github.com/billionairiam/peernode/src/runtime/pkg/containerd-shim-v2"
 )
 
 const (

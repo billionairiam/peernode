@@ -15,9 +15,9 @@ import (
 	"path"
 	"strings"
 
+	aTypes "github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/agent/protocols"
+	pb "github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/agent/protocols/grpc"
 	"github.com/containerd/ttrpc"
-	aTypes "github.com/peernode/peernode/src/runtime/virtcontainers/pkg/agent/protocols"
-	pb "github.com/peernode/peernode/src/runtime/virtcontainers/pkg/agent/protocols/grpc"
 	gpb "google.golang.org/protobuf/types/known/emptypb"
 )
 

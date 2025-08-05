@@ -14,12 +14,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/billionairiam/peernode/src/runtime/pkg/katautils/katatrace"
+	"github.com/billionairiam/peernode/src/runtime/pkg/oci"
+	vc "github.com/billionairiam/peernode/src/runtime/virtcontainers"
+	vf "github.com/billionairiam/peernode/src/runtime/virtcontainers/factory"
+	vcAnnotations "github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/annotations"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
-	"github.com/peernode/peernode/src/runtime/pkg/katautils/katatrace"
-	"github.com/peernode/peernode/src/runtime/pkg/oci"
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers"
-	vf "github.com/peernode/peernode/src/runtime/virtcontainers/factory"
-	vcAnnotations "github.com/peernode/peernode/src/runtime/virtcontainers/pkg/annotations"
 )
 
 // createTracingTags defines tags for the trace span

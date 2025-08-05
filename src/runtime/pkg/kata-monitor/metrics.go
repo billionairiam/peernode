@@ -15,9 +15,9 @@ import (
 	"sync"
 	"time"
 
-	containerdshim "github.com/peernode/peernode/src/runtime/pkg/containerd-shim-v2"
-	mutils "github.com/peernode/peernode/src/runtime/pkg/utils"
-	"github.com/peernode/peernode/src/runtime/pkg/utils/shimclient"
+	containerdshim "github.com/billionairiam/peernode/src/runtime/pkg/containerd-shim-v2"
+	mutils "github.com/billionairiam/peernode/src/runtime/pkg/utils"
+	"github.com/billionairiam/peernode/src/runtime/pkg/utils/shimclient"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/expfmt"
 

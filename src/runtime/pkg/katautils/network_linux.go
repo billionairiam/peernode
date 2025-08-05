@@ -13,10 +13,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	vc "github.com/billionairiam/peernode/src/runtime/virtcontainers"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/rootless"
 	"github.com/containernetworking/plugins/pkg/ns"
 	"github.com/containernetworking/plugins/pkg/testutils"
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers"
-	"github.com/peernode/peernode/src/runtime/virtcontainers/pkg/rootless"
 	"golang.org/x/sys/unix"
 )
 

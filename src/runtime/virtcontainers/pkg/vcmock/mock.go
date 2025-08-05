@@ -19,7 +19,7 @@ import (
 	"context"
 	"fmt"
 
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers"
+	vc "github.com/billionairiam/peernode/src/runtime/virtcontainers"
 	"github.com/sirupsen/logrus"
 )
 

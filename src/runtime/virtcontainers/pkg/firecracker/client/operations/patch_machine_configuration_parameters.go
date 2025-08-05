@@ -15,7 +15,7 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"/src/runtime/virtcontainers/pkg/firecracker/client/models"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/firecracker/client/models"
 )
 
 // NewPatchMachineConfigurationParams creates a new PatchMachineConfigurationParams object,

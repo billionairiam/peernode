@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 
-	"/src/runtime/virtcontainers/pkg/firecracker/client/models"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/firecracker/client/models"
 )
 
 // GetExportVMConfigReader is a Reader for the GetExportVMConfig structure.

@@ -13,8 +13,8 @@ import (
 	"net/http"
 	"time"
 
+	shim "github.com/billionairiam/peernode/src/runtime/pkg/containerd-shim-v2"
 	cdshim "github.com/containerd/containerd/runtime/v2/shim"
-	shim "github.com/peernode/peernode/src/runtime/pkg/containerd-shim-v2"
 )
 
 // BuildShimClient builds and returns an http client for communicating with the provided sandbox

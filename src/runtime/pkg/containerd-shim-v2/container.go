@@ -14,7 +14,7 @@ import (
 	"github.com/containerd/containerd/errdefs"
 	"github.com/opencontainers/runtime-spec/specs-go"
 
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers"
+	vc "github.com/billionairiam/peernode/src/runtime/virtcontainers"
 )
 
 type container struct {

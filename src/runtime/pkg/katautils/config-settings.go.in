@@ -10,8 +10,8 @@
 package katautils
 
 import (
-	config "/src/runtime/pkg/device/config"
-	govmmQemu "/src/runtime/pkg/govmm/qemu"
+	config "github.com/billionairiam/peernode/src/runtime/pkg/device/config"
+	govmmQemu "github.com/billionairiam/peernode/src/runtime/pkg/govmm/qemu"
 )
 
 // name is the name of the runtime
@@ -45,9 +45,9 @@ var DEFAULTRUNTIMECONFIGURATION = "@CONFIG_PATH@"
 var DEFAULTSYSCONFRUNTIMECONFIGURATION = "@SYSCONFIG@"
 var defaultHypervisorPath = "/usr/bin/qemu-system-x86_64"
 var defaultJailerPath = "/usr/bin/jailer"
-var defaultImagePath = "/usr/share/kata-containers/kata-containers.img"
+var defaultImagePath = "/usr/share/billionairiam/peernode.img"
 var defaultKernelPath = "/usr/share/kata-containers/vmlinuz.container"
-var defaultInitrdPath = "/usr/share/kata-containers/kata-containers-initrd.img"
+var defaultInitrdPath = "/usr/share/billionairiam/peernode-initrd.img"
 var defaultRootfsType = "ext4"
 var defaultFirmwarePath = ""
 var defaultFirmwareVolumePath = ""

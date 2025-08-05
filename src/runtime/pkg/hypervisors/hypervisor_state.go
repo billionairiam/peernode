@@ -5,7 +5,7 @@
 
 package hypervisors
 
-import "github.com/peernode/peernode/src/runtime/pkg/device/config"
+import "github.com/billionairiam/peernode/src/runtime/pkg/device/config"
 
 // Bridge is a bridge where devices can be hot plugged
 type Bridge struct {

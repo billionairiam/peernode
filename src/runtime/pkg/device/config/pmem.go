@@ -10,7 +10,7 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/peernode/peernode/src/runtime/virtcontainers/utils"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/utils"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )
@@ -91,7 +91,7 @@ func PmemDeviceInfo(source, destination string) (*DeviceInfo, error) {
 // required to use it as PMEM device and enable DAX.
 // See [1] to know more about the PFN signature.
 //
-// [1] - https:///blob/main/tools/osbuilder/image-builder/nsdax.gpl.c
+// [1] - https://github.com/billionairiam/peernode/blob/main/tools/osbuilder/image-builder/nsdax.gpl.c
 func hasPFNSignature(path string) bool {
 	f, err := os.Open(path)
 	if err != nil {

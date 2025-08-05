@@ -10,9 +10,9 @@ import (
 	"context"
 	"path/filepath"
 
-	"github.com/peernode/peernode/src/runtime/pkg/device/api"
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
-	"github.com/peernode/peernode/src/runtime/virtcontainers/utils"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/api"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/config"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/utils"
 )
 
 const maxDevIDSize = 31
@@ -98,7 +98,7 @@ func (device *BlockDevice) Attach(ctx context.Context, devReceiver api.DeviceRec
 			//Longer term block based VM rootfs should be added
 			//as a regular block device which eliminates the
 			//offset.
-			//https://github.com/peernode/runtime/issues/1061
+			//https://github.com/kata-containers/runtime/issues/1061
 			globalIdx = index + 1
 		}
 

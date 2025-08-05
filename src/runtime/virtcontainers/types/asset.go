@@ -12,7 +12,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/peernode/peernode/src/runtime/virtcontainers/pkg/annotations"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/annotations"
 )
 
 // AssetType describe a type of assets.

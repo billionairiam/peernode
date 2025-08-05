@@ -9,7 +9,7 @@ package api
 import (
 	"context"
 
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/config"
 	"github.com/sirupsen/logrus"
 )
 

@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	vc "github.com/peernode/peernode/src/runtime/virtcontainers/types"
+	vc "github.com/billionairiam/peernode/src/runtime/virtcontainers/types"
 )
 
 // toGRPC maps the virtcontainers error into a grpc error,

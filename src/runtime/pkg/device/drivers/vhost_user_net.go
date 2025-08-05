@@ -10,9 +10,9 @@ import (
 	"context"
 	"encoding/hex"
 
-	"github.com/peernode/peernode/src/runtime/pkg/device/api"
-	"github.com/peernode/peernode/src/runtime/pkg/device/config"
-	"github.com/peernode/peernode/src/runtime/virtcontainers/utils"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/api"
+	"github.com/billionairiam/peernode/src/runtime/pkg/device/config"
+	"github.com/billionairiam/peernode/src/runtime/virtcontainers/utils"
 )
 
 // VhostUserNetDevice is a network vhost-user based device

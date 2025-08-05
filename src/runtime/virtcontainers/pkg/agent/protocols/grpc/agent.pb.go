@@ -17,7 +17,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 
-	protocols "github.com/peernode/peernode/src/runtime/virtcontainers/pkg/agent/protocols"
+	protocols "github.com/billionairiam/peernode/src/runtime/virtcontainers/pkg/agent/protocols"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"

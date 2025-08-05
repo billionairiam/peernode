@@ -15,7 +15,7 @@ import (
 
 	cdshim "github.com/containerd/containerd/runtime/v2/shim"
 
-	shim "github.com/peernode/peernode/src/runtime/pkg/containerd-shim-v2"
+	shim "github.com/billionairiam/peernode/src/runtime/pkg/containerd-shim-v2"
 )
 
 func serveError(w http.ResponseWriter, status int, txt string) {
