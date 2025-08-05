@@ -1,0 +1,287 @@
+//go:build !windows
+
+/*
+   Copyright The containerd Authors.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+package process
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"sync"
+	"syscall"
+	"time"
+
+	"golang.org/x/sys/unix"
+
+	"github.com/containerd/console"
+	"github.com/containerd/containerd/v2/pkg/stdio"
+	"github.com/containerd/errdefs"
+	"github.com/containerd/fifo"
+	runc "github.com/containerd/go-runc"
+	specs "github.com/opencontainers/runtime-spec/specs-go"
+)
+
+type execProcess struct {
+	wg sync.WaitGroup
+	// 一个更精细的状态机，用来跟踪进程的生命周期状态（例如 CREATED, RUNNING, STOPPED）
+	execState execState
+
+	mu      sync.Mutex
+	id      string
+	console console.Console
+	// 它包含了底层的 runc.IO 接口，是真正连接到进程标准输入/输出/错误的管道。没有它，就无法与进程进行任何交互
+	io *processIO
+	// 进程的退出状态码。例如，0 表示成功，非 0 表示失败
+	status int
+	exited time.Time
+	// 安全地存储进程的 PID (Process ID)。safePid封装了 int 和一个锁的结构体，以保证对 PID 的读写是并发安全的
+	pid     safePid
+	closers []io.Closer
+	// 一个专门用来关闭进程标准输入流的 Closer
+	// 当你想告诉进程“不会再有输入了”时（例如，用户按下了 Ctrl+D），
+	// 你需要调用 stdin.Close()。这会向进程发送一个 EOF（文件结束符）信号
+	stdin io.Closer
+	// 保存了用户的原始 I/O 配置（例如，是否需要终端、I/O 的 URI 地址等）。这对于调试和某些后续操作很有用
+	stdio stdio.Stdio
+	// 进程在容器内的 bundle 路径。Bundle 是一个符合 OCI 规范的目录，里面包含了 config.json 等配置文件
+	path string
+	// 进程的详细规格说明，符合 OCI (Open Container Initiative) 规范。这就像进程的“出生证明”和“说明书”。
+	spec specs.Process
+	// 一个指向其父进程（通常是容器的主进程/Init 进程）的指针
+	// 为什么需要：
+	// 关联性：明确表示这个附加进程属于哪个容器主进程。
+	// 依赖性：附加进程的生命周期依赖于主进程。如果主进程退出了，附加进程也应该被清理。
+	// 共享资源：可能需要通过 parent 访问容器级别的共享信息（如 Cgroup、Namespace 等）。
+	parent *Init
+	// 一个只写一次的 channel，用作阻塞/通知机制
+	// 当外部代码需要等待这个进程退出时，它会从这个
+	// channel 读取。这个 channel 在进程创建时是打开的
+	// （读取会阻塞），当进程真正退出时，它会被 close()。
+	// 一旦 channel 被关闭，所有阻塞的读取操作都会立即返回。
+	// 这是一种比轮询检查 exited 字段更高效的等待方式。
+	waitBlock chan struct{}
+}
+
+func (e *execProcess) Wait(ctx context.Context) error {
+	select {
+	case <-e.waitBlock:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+
+func (e *execProcess) ID() string {
+	return e.id
+}
+
+func (e *execProcess) Pid() int {
+	return e.pid.get()
+}
+
+func (e *execProcess) ExitStatus() int {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return e.status
+}
+
+func (e *execProcess) ExitedAt() time.Time {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return e.exited
+}
+
+func (e *execProcess) SetExited(status int) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	e.execState.SetExited(status)
+}
+
+func (e *execProcess) setExited(status int) {
+	e.status = status
+	e.exited = time.Now()
+	e.parent.Platform.ShutdownConsole(context.Background(), e.console)
+	close(e.waitBlock)
+}
+
+func (e *execProcess) Delete(ctx context.Context) error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	return e.execState.Delete(ctx)
+}
+
+func (e *execProcess) delete(ctx context.Context) error {
+	waitTimeout(ctx, &e.wg, 2*time.Second)
+	if e.io != nil {
+		for _, c := range e.closers {
+			c.Close()
+		}
+		e.io.Close()
+	}
+	pidfile := filepath.Join(e.path, fmt.Sprintf("%s.pid", e.id))
+	// silently ignore error
+	os.Remove(pidfile)
+	return nil
+}
+
+func (e *execProcess) Resize(ws console.WinSize) error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	return e.execState.Resize(ws)
+}
+
+func (e *execProcess) resize(ws console.WinSize) error {
+	if e.console == nil {
+		return nil
+	}
+	return e.console.Resize(ws)
+}
+
+func (e *execProcess) Kill(ctx context.Context, sig uint32, _ bool) error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	return e.execState.Kill(ctx, sig, false)
+}
+
+func (e *execProcess) kill(ctx context.Context, sig uint32, _ bool) error {
+	pid := e.pid.get()
+	switch {
+	case pid == 0:
+		return fmt.Errorf("process not created: %w", errdefs.ErrFailedPrecondition)
+	case !e.exited.IsZero():
+		return fmt.Errorf("process already finished: %w", errdefs.ErrNotFound)
+	default:
+		if err := unix.Kill(pid, syscall.Signal(sig)); err != nil {
+			return fmt.Errorf("exec kill error: %w", checkKillError(err))
+		}
+	}
+	return nil
+}
+
+func (e *execProcess) Stdin() io.Closer {
+	return e.stdin
+}
+
+func (e *execProcess) Stdio() stdio.Stdio {
+	return e.stdio
+}
+
+func (e *execProcess) Start(ctx context.Context) error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	return e.execState.Start(ctx)
+}
+
+func (e *execProcess) start(ctx context.Context) (err error) {
+	// The reaper may receive exit signal right after
+	// the container is started, before the e.pid is updated.
+	// In that case, we want to block the signal handler to
+	// access e.pid until it is updated.
+	e.pid.Lock()
+	defer e.pid.Unlock()
+
+	var (
+		socket  *runc.Socket
+		pio     *processIO
+		pidFile = newExecPidFile(e.path, e.id)
+	)
+	if e.stdio.Terminal {
+		if socket, err = runc.NewTempConsoleSocket(); err != nil {
+			return fmt.Errorf("failed to create runc console socket: %w", err)
+		}
+		defer socket.Close()
+	} else {
+		if pio, err = createIO(ctx, e.id, e.parent.IoUID, e.parent.IoGID, e.stdio); err != nil {
+			return fmt.Errorf("failed to create init process I/O: %w", err)
+		}
+		e.io = pio
+	}
+	opts := &runc.ExecOpts{
+		PidFile: pidFile.Path(),
+		Detach:  true,
+	}
+	if pio != nil {
+		opts.IO = pio.IO()
+	}
+	if socket != nil {
+		opts.ConsoleSocket = socket
+	}
+	if err := e.parent.runtime.Exec(ctx, e.parent.id, e.spec, opts); err != nil {
+		close(e.waitBlock)
+		return e.parent.runtimeError(err, "OCI runtime exec failed")
+	}
+	if e.stdio.Stdin != "" {
+		if err := e.openStdin(e.stdio.Stdin); err != nil {
+			return err
+		}
+	}
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	if socket != nil {
+		console, err := socket.ReceiveMaster()
+		if err != nil {
+			return fmt.Errorf("failed to retrieve console master: %w", err)
+		}
+		if e.console, err = e.parent.Platform.CopyConsole(ctx, console, e.id, e.stdio.Stdin, e.stdio.Stdout, e.stdio.Stderr, &e.wg); err != nil {
+			return fmt.Errorf("failed to start console copy: %w", err)
+		}
+	} else {
+		if err := pio.Copy(ctx, &e.wg); err != nil {
+			return fmt.Errorf("failed to start io pipe copy: %w", err)
+		}
+	}
+	pid, err := pidFile.Read()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve OCI runtime exec pi: %wd", err)
+	}
+	e.pid.pid = pid
+	return nil
+}
+
+func (e *execProcess) openStdin(path string) error {
+	sc, err := fifo.OpenFifo(context.Background(), path, syscall.O_WRONLY|syscall.O_NONBLOCK, 0)
+	if err != nil {
+		return fmt.Errorf("failed to open stdin fifo %s: %w", path, err)
+	}
+	e.stdin = sc
+	e.closers = append(e.closers, sc)
+	return nil
+}
+
+func (e *execProcess) Status(ctx context.Context) (string, error) {
+	s, err := e.parent.Status(ctx)
+	if err != nil {
+		return "", err
+	}
+	// if the container as a whole is in the pausing/paused state, so are all
+	// other processes inside the container, use container state here
+	switch s {
+	case "paused", "pausing":
+		return s, nil
+	}
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return e.execState.Status(ctx)
+}
