@@ -25,6 +25,7 @@ import (
 	"sync"
 
 	"github.com/moby/sys/userns"
+	"github.com/pkg/errors"
 
 	"github.com/containerd/cgroups/v3"
 	"github.com/containerd/cgroups/v3/cgroup1"
@@ -40,8 +41,8 @@ import (
 	"github.com/containerd/ttrpc"
 	"github.com/containerd/typeurl/v2"
 
-	"github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/process"
-	"github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/runc"
+	"github.com/billionairiam/peernode/src/runtime/containerd-shim-peernode/process"
+	"github.com/billionairiam/peernode/src/runtime/containerd-shim-peernode/runc"
 	"github.com/containerd/containerd/v2/core/runtime"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
 	"github.com/containerd/containerd/v2/pkg/oom"
@@ -230,36 +231,50 @@ func (s *service) Create(ctx context.Context, r *taskAPI.CreateTaskRequest) (_ *
 	s.lifecycleMu.Unlock()
 	defer cleanup()
 
-	container, err := runc.NewContainer(ctx, s.platform, r)
-	if err != nil {
-		return nil, err
+	type Result struct {
+		container *runc.Container
+		err       error
 	}
+	ch := make(chan Result, 1)
+	go func() {
+		container, err := runc.NewContainer(ctx, s.platform, r)
+		ch <- Result{container, err}
+	}()
 
-	s.containers[r.ID] = container
+	select {
+	case <-ctx.Done():
+		return nil, errors.Errorf("create container timeout: %v", r.ID)
+	case res := <-ch:
+		if res.err != nil {
+			return nil, res.err
+		}
+		container := res.container
+		s.containers[r.ID] = container
 
-	s.send(&eventstypes.TaskCreate{
-		ContainerID: r.ID,
-		Bundle:      r.Bundle,
-		Rootfs:      r.Rootfs,
-		IO: &eventstypes.TaskIO{
-			Stdin:    r.Stdin,
-			Stdout:   r.Stdout,
-			Stderr:   r.Stderr,
-			Terminal: r.Terminal,
-		},
-		Checkpoint: r.Checkpoint,
-		Pid:        uint32(container.Pid()),
-	})
+		s.send(&eventstypes.TaskCreate{
+			ContainerID: r.ID,
+			Bundle:      r.Bundle,
+			Rootfs:      r.Rootfs,
+			IO: &eventstypes.TaskIO{
+				Stdin:    r.Stdin,
+				Stdout:   r.Stdout,
+				Stderr:   r.Stderr,
+				Terminal: r.Terminal,
+			},
+			Checkpoint: r.Checkpoint,
+			Pid:        uint32(container.Pid()),
+		})
 
-	// The following line cannot return an error as the only state in which that
-	// could happen would also cause the container.Pid() call above to
-	// nil-deference panic.
-	proc, _ := container.Process("")
-	handleStarted(container, proc)
+		// The following line cannot return an error as the only state in which that
+		// could happen would also cause the container.Pid() call above to
+		// nil-deference panic.
+		proc, _ := container.Process("")
+		handleStarted(container, proc)
 
-	return &taskAPI.CreateTaskResponse{
-		Pid: uint32(container.Pid()),
-	}, nil
+		return &taskAPI.CreateTaskResponse{
+			Pid: uint32(container.Pid()),
+		}, nil
+	}
 }
 
 func (s *service) RegisterTTRPC(server *ttrpc.Server) error {

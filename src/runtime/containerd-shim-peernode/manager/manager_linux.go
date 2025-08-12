@@ -15,13 +15,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/billionairiam/peernode/src/runtime/containerd-shim-peernode/process"
+	"github.com/billionairiam/peernode/src/runtime/containerd-shim-peernode/runc"
 	"github.com/containerd/cgroups/v3"
 	"github.com/containerd/cgroups/v3/cgroup1"
 	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
 	"github.com/containerd/containerd/api/types"
 	"github.com/containerd/containerd/api/types/runc/options"
-	"github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/process"
-	"github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/runc"
 	"github.com/containerd/containerd/v2/core/mount"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
 	"github.com/containerd/containerd/v2/pkg/schedcore"
@@ -173,7 +173,7 @@ func (manager) Start(ctx context.Context, id string, opts shim.StartOpts) (_ shi
 		return params, err
 	}
 	grouping := id
-	spec, err = readSpec()
+	spec, err := readSpec()
 	if err != nil {
 		return params, err
 	}

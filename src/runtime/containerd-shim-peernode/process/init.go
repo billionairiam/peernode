@@ -30,6 +30,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	grpc "github.com/billionairiam/peernode/src/runtime/containerd-shim-peernode/protocols/agent"
 	"github.com/containerd/console"
 	"github.com/containerd/containerd/v2/core/mount"
 	google_protobuf "github.com/containerd/containerd/v2/pkg/protobuf/types"
@@ -39,6 +40,8 @@ import (
 	"github.com/containerd/log"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"golang.org/x/sys/unix"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // Init represents an initial process for a container
@@ -78,6 +81,8 @@ type Init struct {
 	// 封装了与 runc 二进制文件交互的所有命令（如 runc run, runc state, runc kill 等）。
 	// 所有对容器的生命周期操作（创建、杀死、暂停）最终都会通过这个对象来执行。
 	runtime *runc.Runc
+	agent   *NodeAgent
+	// agent   *task.NodeAgent
 	// pausing preserves the pausing state.
 	// 一个原子布尔值，表示容器当前是否正处于“暂停中”或“恢复中”的过渡状态
 	// pause 和 resume 操作不是瞬时完成的。使用原子变量可以无锁地、安全地检查这个状态，防止在暂停过程中执行其他冲突的操作。
@@ -166,21 +171,34 @@ func (p *Init) Create(ctx context.Context, r *CreateConfig) (retError error) {
 	if r.Checkpoint != "" {
 		return p.createCheckpointedState(r, pidFile)
 	}
-	opts := &runc.CreateOpts{
+	req := &grpc.CreateContainerRequest{
 		PidFile:      pidFile.Path(),
 		NoPivot:      p.NoPivotRoot,
 		NoNewKeyring: p.NoNewKeyring,
 	}
-	if p.io != nil {
-		opts.IO = p.io.IO()
-	}
-	if socket != nil {
-		opts.ConsoleSocket = socket
+
+	if _, err = p.agent.sendReq(ctx, req); err != nil {
+		if err.Error() == context.DeadlineExceeded.Error() {
+			return status.Errorf(codes.DeadlineExceeded, "CreateContainerRequest timed out")
+		}
+		return err
 	}
 
-	if err := p.runtime.Create(ctx, r.ID, r.Bundle, opts); err != nil {
-		return p.runtimeError(err, "OCI runtime create failed")
-	}
+	// opts := &runc.CreateOpts{
+	// 	PidFile:      pidFile.Path(),
+	// 	NoPivot:      p.NoPivotRoot,
+	// 	NoNewKeyring: p.NoNewKeyring,
+	// }
+	// if p.io != nil {
+	// 	opts.IO = p.io.IO()
+	// }
+	// if socket != nil {
+	// 	opts.ConsoleSocket = socket
+	// }
+
+	// if err := p.runtime.Create(ctx, r.ID, r.Bundle, opts); err != nil {
+	// 	return p.runtimeError(err, "OCI runtime create failed")
+	// }
 	if r.Stdin != "" {
 		if err := p.openStdin(r.Stdin); err != nil {
 			return err

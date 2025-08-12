@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 
-	"github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/manager"
-	_ "github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/task/plugin"
+	"github.com/billionairiam/peernode/src/runtime/containerd-shim-peernode/manager"
+	_ "github.com/billionairiam/peernode/src/runtime/containerd-shim-peernode/task/plugin"
 	"github.com/containerd/containerd/v2/pkg/shim"
 )
 
